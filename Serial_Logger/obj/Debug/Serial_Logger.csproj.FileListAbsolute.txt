@@ -1,0 +1,10 @@
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\bin\Debug\Serial_Logger.exe.config
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\bin\Debug\Serial_Logger.exe
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\bin\Debug\Serial_Logger.pdb
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.csproj.AssemblyReference.cache
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.Form1.resources
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.Properties.Resources.resources
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.csproj.GenerateResource.cache
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.csproj.CoreCompileInputs.cache
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.exe
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.pdb

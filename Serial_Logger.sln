@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serial_Logger", "Serial_Logger\Serial_Logger.csproj", "{0D10B0C2-8D2C-4343-93E8-09B2C68D5735}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{437A3D27-216B-4ECE-8F20-7F257EEBEDEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0D10B0C2-8D2C-4343-93E8-09B2C68D5735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D10B0C2-8D2C-4343-93E8-09B2C68D5735}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D10B0C2-8D2C-4343-93E8-09B2C68D5735}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D10B0C2-8D2C-4343-93E8-09B2C68D5735}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9BA32CBD-53AE-4DBE-A5DD-31B2EF70DCE9}
+	EndGlobalSection
+EndGlobal
