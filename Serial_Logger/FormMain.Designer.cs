@@ -353,6 +353,7 @@ namespace Serial_Logger
             this.Controls.Add(this.Cmd_GroupBox);
             this.Controls.Add(this.Connection_groupBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(845, 450);
             this.Name = "Form1";
             this.Text = "FormMain";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);

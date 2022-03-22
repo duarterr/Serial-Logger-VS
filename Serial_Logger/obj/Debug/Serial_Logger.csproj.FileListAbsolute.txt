@@ -8,3 +8,4 @@ D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.csproj.G
 D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.csproj.CoreCompileInputs.cache
 D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.exe
 D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.pdb
+D:\Git\VisualStudio\Serial_Logger\Serial_Logger\obj\Debug\Serial_Logger.csproj.SuggestedBindingRedirects.cache
