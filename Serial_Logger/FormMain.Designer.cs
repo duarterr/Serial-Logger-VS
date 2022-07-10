@@ -56,10 +56,15 @@ namespace Serial_Logger
             this.Data_Button_Erase = new System.Windows.Forms.Button();
             this.Data_Button_Export = new System.Windows.Forms.Button();
             this.Log_GroupBox_Log = new System.Windows.Forms.GroupBox();
+            this.RTLog_GroupBox = new System.Windows.Forms.GroupBox();
+            this.RTLog_Checkbox_Enable = new System.Windows.Forms.CheckBox();
+            this.RTLog_Button_SetFile = new System.Windows.Forms.Button();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.Connection_groupBox.SuspendLayout();
             this.Cmd_GroupBox.SuspendLayout();
             this.Data_GroupBox.SuspendLayout();
             this.Log_GroupBox_Log.SuspendLayout();
+            this.RTLog_GroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // Connection_groupBox
@@ -237,7 +242,7 @@ namespace Serial_Logger
             this.Cmd_GroupBox.Controls.Add(this.Cmd_TextBox);
             this.Cmd_GroupBox.Controls.Add(this.Cmd_Button_Clear);
             this.Cmd_GroupBox.Controls.Add(this.Cmd_Button_Send);
-            this.Cmd_GroupBox.Location = new System.Drawing.Point(638, 12);
+            this.Cmd_GroupBox.Location = new System.Drawing.Point(738, 12);
             this.Cmd_GroupBox.Name = "Cmd_GroupBox";
             this.Cmd_GroupBox.Size = new System.Drawing.Size(178, 75);
             this.Cmd_GroupBox.TabIndex = 5;
@@ -293,7 +298,7 @@ namespace Serial_Logger
             this.Graph_RichTextBox_Log.Location = new System.Drawing.Point(6, 19);
             this.Graph_RichTextBox_Log.Name = "Graph_RichTextBox_Log";
             this.Graph_RichTextBox_Log.ReadOnly = true;
-            this.Graph_RichTextBox_Log.Size = new System.Drawing.Size(791, 281);
+            this.Graph_RichTextBox_Log.Size = new System.Drawing.Size(891, 281);
             this.Graph_RichTextBox_Log.TabIndex = 40;
             this.Graph_RichTextBox_Log.Text = "";
             // 
@@ -326,7 +331,7 @@ namespace Serial_Logger
             this.Data_Button_Export.Name = "Data_Button_Export";
             this.Data_Button_Export.Size = new System.Drawing.Size(80, 25);
             this.Data_Button_Export.TabIndex = 2;
-            this.Data_Button_Export.Text = "Export data";
+            this.Data_Button_Export.Text = "Export all";
             this.Data_Button_Export.UseVisualStyleBackColor = true;
             this.Data_Button_Export.Click += new System.EventHandler(this.Data_Button_Export_Click);
             // 
@@ -338,16 +343,52 @@ namespace Serial_Logger
             this.Log_GroupBox_Log.Controls.Add(this.Graph_RichTextBox_Log);
             this.Log_GroupBox_Log.Location = new System.Drawing.Point(13, 93);
             this.Log_GroupBox_Log.Name = "Log_GroupBox_Log";
-            this.Log_GroupBox_Log.Size = new System.Drawing.Size(804, 306);
+            this.Log_GroupBox_Log.Size = new System.Drawing.Size(904, 306);
             this.Log_GroupBox_Log.TabIndex = 42;
             this.Log_GroupBox_Log.TabStop = false;
             this.Log_GroupBox_Log.Text = "Log";
+            // 
+            // RTLog_GroupBox
+            // 
+            this.RTLog_GroupBox.Controls.Add(this.RTLog_Checkbox_Enable);
+            this.RTLog_GroupBox.Controls.Add(this.RTLog_Button_SetFile);
+            this.RTLog_GroupBox.Location = new System.Drawing.Point(638, 12);
+            this.RTLog_GroupBox.Name = "RTLog_GroupBox";
+            this.RTLog_GroupBox.Size = new System.Drawing.Size(94, 75);
+            this.RTLog_GroupBox.TabIndex = 42;
+            this.RTLog_GroupBox.TabStop = false;
+            this.RTLog_GroupBox.Text = "Real-time log";
+            // 
+            // RTLog_Checkbox_Enable
+            // 
+            this.RTLog_Checkbox_Enable.AutoSize = true;
+            this.RTLog_Checkbox_Enable.Enabled = false;
+            this.RTLog_Checkbox_Enable.Location = new System.Drawing.Point(12, 49);
+            this.RTLog_Checkbox_Enable.Name = "RTLog_Checkbox_Enable";
+            this.RTLog_Checkbox_Enable.Size = new System.Drawing.Size(76, 17);
+            this.RTLog_Checkbox_Enable.TabIndex = 2;
+            this.RTLog_Checkbox_Enable.Text = "Enable log";
+            this.toolTip.SetToolTip(this.RTLog_Checkbox_Enable, "Append log data to file everytime data is received or transmitted");
+            this.RTLog_Checkbox_Enable.UseVisualStyleBackColor = true;
+            this.RTLog_Checkbox_Enable.CheckedChanged += new System.EventHandler(this.RTLog_Checkbox_Enable_CheckedChanged);
+            // 
+            // RTLog_Button_SetFile
+            // 
+            this.RTLog_Button_SetFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.RTLog_Button_SetFile.Location = new System.Drawing.Point(7, 14);
+            this.RTLog_Button_SetFile.Name = "RTLog_Button_SetFile";
+            this.RTLog_Button_SetFile.Size = new System.Drawing.Size(80, 25);
+            this.RTLog_Button_SetFile.TabIndex = 1;
+            this.RTLog_Button_SetFile.Text = "Set file";
+            this.RTLog_Button_SetFile.UseVisualStyleBackColor = true;
+            this.RTLog_Button_SetFile.Click += new System.EventHandler(this.RTLog_Button_SetFile_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(829, 411);
+            this.ClientSize = new System.Drawing.Size(929, 411);
+            this.Controls.Add(this.RTLog_GroupBox);
             this.Controls.Add(this.Log_GroupBox_Log);
             this.Controls.Add(this.Data_GroupBox);
             this.Controls.Add(this.Cmd_GroupBox);
@@ -363,6 +404,8 @@ namespace Serial_Logger
             this.Cmd_GroupBox.PerformLayout();
             this.Data_GroupBox.ResumeLayout(false);
             this.Log_GroupBox_Log.ResumeLayout(false);
+            this.RTLog_GroupBox.ResumeLayout(false);
+            this.RTLog_GroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -394,6 +437,10 @@ namespace Serial_Logger
         private System.Windows.Forms.Label Connection_Label_Baud;
         private System.Windows.Forms.ComboBox Connection_ComboBox_Baud;
         private System.Windows.Forms.GroupBox Log_GroupBox_Log;
+        private System.Windows.Forms.GroupBox RTLog_GroupBox;
+        private System.Windows.Forms.CheckBox RTLog_Checkbox_Enable;
+        private System.Windows.Forms.Button RTLog_Button_SetFile;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 

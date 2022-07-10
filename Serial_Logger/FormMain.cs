@@ -60,8 +60,114 @@ namespace Serial_Logger
         // Connection variables - Initialized after FormMain components initialization
         private Connection_Class Connection;
 
-        static string Last_Message;
-        string Log_String;
+        /* ------------------------------------------------------------------------------------------------------------ */
+        // Global variables
+        /* ------------------------------------------------------------------------------------------------------------ */
+
+        // Real time log filepath
+        private string _RTLog_File = null;
+        public string RTLog_File
+        {
+            get
+            {
+                return _RTLog_File;
+            }
+
+            set 
+            {
+                _RTLog_File = value;
+
+                if (value == null)
+                {
+                    RTLog_Checkbox_Enable.Enabled = false;
+                    RTLog_Checkbox_Enable.Checked = false;
+                }
+                else
+                    RTLog_Checkbox_Enable.Enabled = true;
+            }
+        }
+
+        // Real time log enable flag
+        public bool RTLog_Enabled = false;
+
+        /* ---------------------------------------------------------------------------------------------------------------- */
+        // Connection class
+        /* ---------------------------------------------------------------------------------------------------------------- */
+
+        private class Connection_Class
+        {
+            /* ------------------------------------------------------------------------------------------------------------ */
+            // Variables
+            /* ------------------------------------------------------------------------------------------------------------ */
+
+            public char[] RX_Message;   // RX message buffer
+            public char[] TX_Message;   // TX message buffer
+            public uint RX_Total_I;     // RX messages counter - Integer format
+            public uint TX_Total_I;     // TX messages counter - Integer format
+            public DateTime RX_Last_I;  // Time of the last RX - Datetime format
+            public DateTime TX_Last_I;  // Time of the last TX - Datetime format
+
+            /* ------------------------------------------------------------------------------------------------------------ */
+            // Properties - Readonly - Used to get formatted values of device variables
+            /* ------------------------------------------------------------------------------------------------------------ */
+
+            // RX messages counter property - Readonly string format
+            public string RX_Total_S
+            {
+                get
+                {
+                    return (RX_Total_I.ToString());
+                }
+            }
+
+            // TX messages counter property - Readonly string format
+            public string TX_Total_S
+            {
+                get
+                {
+                    return (TX_Total_I.ToString());
+                }
+            }
+
+            // Time of the last RX property - Readonly string format
+            public string RX_Last_S
+            {
+                get
+                {
+                    if (RX_Last_I == DateTime.MinValue)
+                        return "No data";
+                    else
+                        return Convert.ToString(RX_Last_I);
+                }
+            }
+
+            // Time of the last TX property - Readonly string format
+            public string TX_Last_S
+            {
+                get
+                {
+                    if (TX_Last_I == DateTime.MinValue)
+                        return "No data";
+                    else
+                        return Convert.ToString(TX_Last_I);
+                }
+            }
+
+            /* ------------------------------------------------------------------------------------------------------------ */
+            // Constructor
+            /* ------------------------------------------------------------------------------------------------------------ */
+
+            public Connection_Class()
+            {
+                RX_Message = new char[Defines.RX_SIZE]; // RX message buffer
+                TX_Message = new char[Defines.TX_SIZE]; // TX message buffer
+                RX_Total_I = 0;                         // RX messages counter
+                TX_Total_I = 0;                         // TX messages counter
+                RX_Last_I = DateTime.MinValue;          // Time of the last RX
+                TX_Last_I = DateTime.MinValue;          // Time of the last TX
+            }
+        }
+
 
         /* ------------------------------------------------------------------------------------------------------------ */
         // Main form initialization
@@ -106,6 +212,23 @@ namespace Serial_Logger
             this.Text += Defines.CODE_VERSION;
             this.Text += " - ";
             this.Text += "Not connected";
+        }
+
+        /* ------------------------------------------------------------------------------------------------------------ */
+        // Main form close
+        /* ------------------------------------------------------------------------------------------------------------ */
+
+        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Serial port is open
+            if (serialPort.IsOpen)
+            {
+                // Discard input buffer
+                serialPort.DiscardInBuffer();
+
+                // Close serial port
+                serialPort.Close();
+            }
         }
 
         /* ------------------------------------------------------------------------------------------------------------ */
@@ -200,23 +323,6 @@ namespace Serial_Logger
         }
 
         /* ------------------------------------------------------------------------------------------------------------ */
-        // Main form close
-        /* ------------------------------------------------------------------------------------------------------------ */
-
-        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            // Serial port is open
-            if (serialPort.IsOpen)
-            {
-                // Discard input buffer
-                serialPort.DiscardInBuffer();
-
-                // Close serial port
-                serialPort.Close();
-            }
-        }
-
-        /* ------------------------------------------------------------------------------------------------------------ */
         // Serial changed function - Called every time "Serial_Port_Open" value is set
         /* ------------------------------------------------------------------------------------------------------------ */
 
@@ -277,6 +383,57 @@ namespace Serial_Logger
         }
 
         /* ------------------------------------------------------------------------------------------------------------ */
+        // Update view - Connection_groupBox
+        /* ------------------------------------------------------------------------------------------------------------ */
+
+        private void Controller_Update_Connection()
+        {
+            // Update RX textBoxes values
+            Connection_TextBox_RX_Total.Text = Connection.RX_Total_S;
+            Connection_TextBox_RX_Last.Text = Connection.RX_Last_S;
+
+            // Update TX textBoxes values
+            Connection_TextBox_TX_Total.Text = Connection.TX_Total_S;
+            Connection_TextBox_TX_Last.Text = Connection.TX_Last_S;
+        }
+
+        /* ------------------------------------------------------------------------------------------------------------ */
+        // Data_Button_Erase action
+        /* ------------------------------------------------------------------------------------------------------------ */
+
+        private void Data_Button_Erase_Click(object sender, EventArgs e)
+        {
+            // Nothing to erase
+            if ((Connection.RX_Total_I == 0) && (Connection.TX_Total_I == 0))
+            {
+                // Show warning message
+                MessageBox.Show("No data to erase.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return;
+            }
+
+            // There is data to erase
+            else
+            {
+                // Display confirmation message
+                if (MessageBox.Show("Are you sure?", "Erase data", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    // Reset connection variables
+                    Connection = new Connection_Class();
+
+                    // Update view - Connection variables
+                    Controller_Update_Connection();
+
+                    /* ------------------------------------------------------------------------------------------------ */
+
+                    // Erase log
+                    Graph_RichTextBox_Log.Text = "";
+                }
+            }
+        }
+
+        /* ------------------------------------------------------------------------------------------------------------ */
         // Data_Button_Export action
         /* ------------------------------------------------------------------------------------------------------------ */
 
@@ -331,132 +488,39 @@ namespace Serial_Logger
         }
 
         /* ------------------------------------------------------------------------------------------------------------ */
-        // Update view - Connection_groupBox
+        // RTLog_Button_SetFile action
         /* ------------------------------------------------------------------------------------------------------------ */
 
-        private void Controller_Update_Connection()
+        private void RTLog_Button_SetFile_Click(object sender, EventArgs e)
         {
-            // Update RX textBoxes values
-            Connection_TextBox_RX_Total.Text = Connection.RX_Total_S;
-            Connection_TextBox_RX_Last.Text = Connection.RX_Last_S;
-
-            // Update TX textBoxes values
-            Connection_TextBox_TX_Total.Text = Connection.TX_Total_S;
-            Connection_TextBox_TX_Last.Text = Connection.TX_Last_S;
-        }
-
-        /* ---------------------------------------------------------------------------------------------------------------- */
-        // Connection class
-        /* ---------------------------------------------------------------------------------------------------------------- */
-
-        private class Connection_Class
-        {
-            /* ------------------------------------------------------------------------------------------------------------ */
-            // Variables
-            /* ------------------------------------------------------------------------------------------------------------ */
-
-            public char[] RX_Message;   // RX message buffer
-            public char[] TX_Message;   // TX message buffer
-            public uint RX_Total_I;     // RX messages counter - Integer format
-            public uint TX_Total_I;     // TX messages counter - Integer format
-            public DateTime RX_Last_I;  // Time of the last RX - Datetime format
-            public DateTime TX_Last_I;  // Time of the last TX - Datetime format
-
-            /* ------------------------------------------------------------------------------------------------------------ */
-            // Properties - Readonly - Used to get formatted values of device variables
-            /* ------------------------------------------------------------------------------------------------------------ */
-
-            // RX messages counter property - Readonly string format
-            public string RX_Total_S
+            // Prompt user to choose file
+            SaveFileDialog Dialog = new SaveFileDialog
             {
-                get
-                {
-                    return (RX_Total_I.ToString());
-                }
+                Filter = "TXT files|*.txt",
+                Title = "Save data as txt file",
+                FileName = "Log.txt"
+            };
+
+            // Path path and filename are valid
+            if ((Dialog.ShowDialog() == DialogResult.OK) && !string.IsNullOrWhiteSpace(Dialog.FileName))
+            {
+                // Get export path and filename
+                RTLog_File = Dialog.FileName;
             }
 
-            // TX messages counter property - Readonly string format
-            public string TX_Total_S
-            {
-                get
-                {
-                    return (TX_Total_I.ToString());
-                }
-            }
-
-            // Time of the last RX property - Readonly string format
-            public string RX_Last_S
-            {
-                get
-                {
-                    if (RX_Last_I == DateTime.MinValue)
-                        return "No data";
-                    else
-                        return Convert.ToString(RX_Last_I);
-                }
-            }
-
-            // Time of the last TX property - Readonly string format
-            public string TX_Last_S
-            {
-                get
-                {
-                    if (TX_Last_I == DateTime.MinValue)
-                        return "No data";
-                    else
-                        return Convert.ToString(TX_Last_I);
-                }
-            }
-
-            /* ------------------------------------------------------------------------------------------------------------ */
-            // Constructor
-            /* ------------------------------------------------------------------------------------------------------------ */
-
-            public Connection_Class()
-            {
-                RX_Message = new char[Defines.RX_SIZE]; // RX message buffer
-                TX_Message = new char[Defines.TX_SIZE]; // TX message buffer
-                RX_Total_I = 0;                         // RX messages counter
-                TX_Total_I = 0;                         // TX messages counter
-                RX_Last_I = DateTime.MinValue;          // Time of the last RX
-                TX_Last_I = DateTime.MinValue;          // Time of the last TX
-            }
-        }
-
-        /* ------------------------------------------------------------------------------------------------------------ */
-        // Data_Button_Erase action
-        /* ------------------------------------------------------------------------------------------------------------ */
-
-        private void Data_Button_Erase_Click(object sender, EventArgs e)
-        {
-            // Nothing to erase
-            if ((Connection.RX_Total_I == 0) && (Connection.TX_Total_I == 0))
-            {
-                // Show warning message
-                MessageBox.Show("No data to erase.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                return;
-            }
-
-            // There is data to erase
+            // Path or filename are invalid
             else
-            {
-                // Display confirmation message
-                if (MessageBox.Show("Are you sure?", "Erase data", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
-                {
-                    // Reset connection variables
-                    Connection = new Connection_Class();
+                RTLog_File = null;
+        }
 
-                    // Update view - Connection variables
-                    Controller_Update_Connection();
+        /* ------------------------------------------------------------------------------------------------------------ */
+        // RTLog_Checkbox_Enable_CheckedChanged action
+        /* ------------------------------------------------------------------------------------------------------------ */
 
-                    /* ------------------------------------------------------------------------------------------------ */
-
-                    // Erase log
-                    Graph_RichTextBox_Log.Text = "";
-                }
-            }
+        private void RTLog_Checkbox_Enable_CheckedChanged(object sender, EventArgs e)
+        {
+            // Set real time log enable flag
+            RTLog_Enabled = RTLog_Checkbox_Enable.Checked;
         }
 
         /* ------------------------------------------------------------------------------------------------------------ */
@@ -514,25 +578,39 @@ namespace Serial_Logger
             // Log received message
             if (Type == "RX")
             {
-                // Append to richTextBox_Log
+                // Append header to richTextBox_Log
                 Graph_RichTextBox_Log.SelectionColor = Color.DodgerBlue;
                 Graph_RichTextBox_Log.AppendText("[" + Connection_TextBox_RX_Last.Text + " RX] ");
-                Graph_RichTextBox_Log.SelectionColor = Color.Black;
-                Graph_RichTextBox_Log.AppendText(Message + "\r\n");
             }
 
             // Log sent message
             else if (Type == "TX")
             {
-                // Append to richTextBox_Log
+                // Append header to richTextBox_Log
                 Graph_RichTextBox_Log.SelectionColor = Color.LimeGreen;
                 Graph_RichTextBox_Log.AppendText("[" + Connection_TextBox_TX_Last.Text + " TX] ");
-                Graph_RichTextBox_Log.SelectionColor = Color.Black;
-                Graph_RichTextBox_Log.AppendText(Message + "\r\n");
             }
 
-            // Sroll to the bottom of richTextBox_Log
-            //Graph_RichTextBox_Log.ScrollToCaret(); // Causes illegal memory exception
+            // Append message to richTextBox_Log
+            Graph_RichTextBox_Log.SelectionColor = Color.Black;
+            Graph_RichTextBox_Log.AppendText(Message + "\r\n");
+
+            if (RTLog_Enabled)
+            {
+                try
+                {
+                    // Append last line of Connection_TextBox_RX_Last to RTLog_File
+                    System.IO.File.AppendAllText(RTLog_File, Graph_RichTextBox_Log.Lines[Graph_RichTextBox_Log.Lines.Length - 2]);
+                    System.IO.File.AppendAllText(RTLog_File, "\n");
+                }
+                catch (Exception MSG)
+                {
+                    // Show warning message
+                    MessageBox.Show(MSG.Message, "Error appending data to log file", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+
         }
 
         /* ------------------------------------------------------------------------------------------------------------ */
