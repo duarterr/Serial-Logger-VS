@@ -575,9 +575,13 @@ namespace Serial_Logger
 
         private void Controller_Update_Log(string Type, string Message)
         {
+            string lineToAppend = null;
+
             // Log received message
             if (Type == "RX")
             {
+                lineToAppend = "[" + Connection_TextBox_RX_Last.Text + " RX] ";
+
                 // Append header to richTextBox_Log
                 Graph_RichTextBox_Log.SelectionColor = Color.DodgerBlue;
                 Graph_RichTextBox_Log.AppendText("[" + Connection_TextBox_RX_Last.Text + " RX] ");
@@ -586,22 +590,28 @@ namespace Serial_Logger
             // Log sent message
             else if (Type == "TX")
             {
+                lineToAppend = "[" + Connection_TextBox_TX_Last.Text + " TX] ";
+
                 // Append header to richTextBox_Log
                 Graph_RichTextBox_Log.SelectionColor = Color.LimeGreen;
                 Graph_RichTextBox_Log.AppendText("[" + Connection_TextBox_TX_Last.Text + " TX] ");
             }
 
+            if (Message[Message.Length - 1] != '\n')
+                Message += '\n';
+
+            lineToAppend += Message;
+
             // Append message to richTextBox_Log
             Graph_RichTextBox_Log.SelectionColor = Color.Black;
-            Graph_RichTextBox_Log.AppendText(Message + "\r\n");
+            Graph_RichTextBox_Log.AppendText(Message);
 
             if (RTLog_Enabled)
             {
                 try
                 {
                     // Append last line of Connection_TextBox_RX_Last to RTLog_File
-                    System.IO.File.AppendAllText(RTLog_File, Graph_RichTextBox_Log.Lines[Graph_RichTextBox_Log.Lines.Length - 2]);
-                    System.IO.File.AppendAllText(RTLog_File, "\n");
+                    System.IO.File.AppendAllText(RTLog_File, lineToAppend);
                 }
                 catch (Exception MSG)
                 {
